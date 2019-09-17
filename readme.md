@@ -2,18 +2,16 @@
 
 A CLI for i18n-translate.
 
-## Publishing to NPM
+## Usage
 
-To package your CLI up for NPM, do this:
-
-```shell
-$ npm login
-$ npm whoami
-$ npm lint
-$ npm test
-(if typescript, run `npm run build` here)
-$ npm publish
 ```
+i18n-translate --project 1301 --token $WOO_POEDITOR --path ./app/i18n
+
+```
+
+It will download each language translation form poeditor and save them in the indcated path.
+
+Project, Token and Path are required parameters.
 
 # License
 
