@@ -5,7 +5,7 @@ A CLI for i18n-translate.
 ## Usage
 
 ```
-i18n-translate --project 1301 --token $WOO_POEDITOR --path ./app/i18n
+i18n-translate --project $PROJECT_ID --token $POEDITOR_TOKEN --path ./app/i18n
 
 ```
 
