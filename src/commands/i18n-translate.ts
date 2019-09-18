@@ -18,7 +18,7 @@ interface Options {
   path: string
 }
 
-const poeditor_api = Axios.create({
+const poeditorApi = Axios.create({
   baseURL: 'https://api.poeditor.com/v2',
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -29,13 +29,13 @@ const poeditor_api = Axios.create({
  *
  * @param project
  * @param token
- * @returns poeditor_api.post with default params (project id and api token)
+ * @returns poeditorApi.post with default params (project id and api token)
  */
-const poeditor_post_generator = (project: string, token: string) => (
+const poeditorPostGenerator = (project: string, token: string) => (
   url: string,
   data: object = {}
 ) =>
-  poeditor_api.post(
+  poeditorApi.post(
     url,
     qs.stringify({
       id: `${project}`,
@@ -62,14 +62,14 @@ module.exports = {
     if (!token) return print.error(NO_TOKEN)
     if (!path) return print.error(NO_PATH)
 
-    const poeditor_post = poeditor_post_generator(project, token)
+    const poeditorPost = poeditorPostGenerator(project, token)
 
     // GET LIST OF LANGUAGES
     const {
       data: {
         result: { languages }
       }
-    } = await poeditor_post('/languages/list')
+    } = await poeditorPost('/languages/list')
 
     for (const { code: language } of languages) {
       // FOR EACH LANG , GET THE EXPORT URL
@@ -77,7 +77,7 @@ module.exports = {
         data: {
           result: { url }
         }
-      } = await poeditor_post('/projects/export', {
+      } = await poeditorPost('/projects/export', {
         language,
         type: 'key_value_json'
       })
@@ -86,7 +86,7 @@ module.exports = {
       // SAVE TRANSLATION FILE
       const { data } = await Axios.get(url)
       const fullPath = path + filesystem.separator + language + '.json'
-      filesystem.writeAsync(fullPath, data)
+      await filesystem.writeAsync(fullPath, data)
     }
     print.success('TRANSLATIONS UPDATED')
   }
