@@ -43,7 +43,6 @@ const poeditorPostGenerator = (project: string, token: string) => async (
       ...data
     })
   )
-  console.log(JSON.stringify(responseData))
   if ('fail' === responseData.response.status) {
     throw JSON.stringify(responseData)
   }
