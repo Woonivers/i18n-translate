@@ -26,16 +26,16 @@ const poeditorApi = Axios.create({
 })
 
 /**
- *
+ *  add default params (project id and api token)
  * @param project
  * @param token
- * @returns poeditorApi.post with default params (project id and api token)
+ * @returns poeditorApi.post.data if everything went ok
  */
-const poeditorPostGenerator = (project: string, token: string) => (
+const poeditorPostGenerator = (project: string, token: string) => async (
   url: string,
   data: object = {}
-) =>
-  poeditorApi.post(
+) => {
+  const { data: responseData } = await poeditorApi.post(
     url,
     qs.stringify({
       id: `${project}`,
@@ -43,6 +43,12 @@ const poeditorPostGenerator = (project: string, token: string) => (
       ...data
     })
   )
+  console.log(JSON.stringify(responseData))
+  if ('fail' === responseData.response.status) {
+    throw JSON.stringify(responseData)
+  }
+  return responseData
+}
 
 module.exports = {
   name: 'i18n-translate',
@@ -65,18 +71,15 @@ module.exports = {
     const poeditorPost = poeditorPostGenerator(project, token)
 
     // GET LIST OF LANGUAGES
+
     const {
-      data: {
-        result: { languages }
-      }
+      result: { languages }
     } = await poeditorPost('/languages/list')
 
     for (const { code: language } of languages) {
       // FOR EACH LANG , GET THE EXPORT URL
       const {
-        data: {
-          result: { url }
-        }
+        result: { url }
       } = await poeditorPost('/projects/export', {
         language,
         type: 'key_value_json'
