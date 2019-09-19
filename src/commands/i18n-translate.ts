@@ -52,14 +52,32 @@ const poeditorPostGenerator = (project: string, token: string) => async (
 module.exports = {
   name: 'i18n-translate',
   run: async (toolbox: GluegunToolbox) => {
-    const { filesystem, parameters, print } = toolbox
+    const {
+      filesystem,
+      parameters,
+      print,
+      config: { loadConfig }
+    } = toolbox
+
+    // GET CONFIG PARAMS
+    const homeDir = (finalFolder = '') =>
+      filesystem.homedir() + filesystem.separator + finalFolder
+    const name = 'i18n-translate'
+    const myConfig = {
+      // ~/.woo/.i18n-translaterc
+      ...loadConfig(name, homeDir('.woo')),
+      // ~/.i18n-translate/.i18n-translaterc
+      ...loadConfig(name, homeDir('.' + name)),
+      // ./.i18n-translaterc
+      ...loadConfig(name, filesystem.cwd())
+    }
 
     // GET CLI PARAMS
     const {
-      platform = 'poeditor',
-      project,
-      token,
-      path
+      platform = myConfig.platform || 'poeditor',
+      project = myConfig.project,
+      token = myConfig.token,
+      path = myConfig.path
     } = parameters.options as Options
 
     if (!platforms.includes(platform)) return print.error(NO_PLATFORM)
