@@ -49,8 +49,10 @@ const poeditorPostGenerator = (project: string, token: string) => async (
   return responseData
 }
 
+const MODULE_NAME = 'i18n-translate'
+
 module.exports = {
-  name: 'i18n-translate',
+  name: MODULE_NAME,
   run: async (toolbox: GluegunToolbox) => {
     const {
       filesystem,
@@ -61,15 +63,14 @@ module.exports = {
 
     // GET CONFIG PARAMS
     const homeDir = (finalFolder = '') =>
-      filesystem.homedir() + filesystem.separator + finalFolder
-    const name = 'i18n-translate'
+      filesystem.path(filesystem.homedir(), finalFolder)
     const myConfig = {
       // ~/.woo/.i18n-translaterc
-      ...loadConfig(name, homeDir('.woo')),
+      ...loadConfig(MODULE_NAME, homeDir('.woo')),
       // ~/.i18n-translate/.i18n-translaterc
-      ...loadConfig(name, homeDir('.' + name)),
+      ...loadConfig(MODULE_NAME, homeDir(`.${MODULE_NAME}`)),
       // ./.i18n-translaterc
-      ...loadConfig(name, filesystem.cwd())
+      ...loadConfig(MODULE_NAME, filesystem.cwd())
     }
 
     // GET CLI PARAMS
